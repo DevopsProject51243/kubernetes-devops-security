@@ -3,12 +3,15 @@ pipeline {
 
 
     stages {
-        stage('Build Artifact') {
+        stage('Build - Maven') {
             steps {
-                // Compile and package without running tests
-                sh "mvn clean package -DskipTests=true"
-                // Archive the JAR for download
+                sh 'mvn clean package -DskipTests=true'
                 archive 'target/*.jar'
+            }
+        }
+        stage('Unit Tests') {
+            steps {
+                sh 'mvn test'
             }
         }
     }
