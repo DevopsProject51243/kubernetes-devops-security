@@ -24,9 +24,11 @@ pipeline {
         }
         stage('Docker Build and Push') {
             steps {
-                sh 'printenv'
-                sh 'docker build -t ganesh5124/helm-counter:"$GIT_COMMIT" .'
-                sh 'docker push ganesh5124/helm-counter:"$GIT_COMMIT"'
+                withDockerRegistry(credentialsId: 'docker-hub', url: '') {
+                    sh 'printenv'
+                    sh 'docker build -t ganesh5124/helm-counter:"$GIT_COMMIT" .'
+                    sh 'docker push ganesh5124/helm-counter:"$GIT_COMMIT"'
+                }
             }
         }
     }
