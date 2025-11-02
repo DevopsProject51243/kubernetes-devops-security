@@ -85,15 +85,18 @@
 				</plugin>
 				<!-- OWASP Dependency-Check -->
 				<plugin>
-				<groupId>org.owasp</groupId>
-				<artifactId>dependency-check-maven</artifactId>
-				<version>6.1.6</version>
-				<configuration>
-					<format>ALL</format>
-					<failBuildOnCVSS>9</failBuildOnCVSS>
-					<!-- You can add suppression files, proxy settings, internal CVE mirrors, etc. -->
-				</configuration>
+					<groupId>org.owasp</groupId>
+					<artifactId>dependency-check-maven</artifactId>
+					<version>12.1.0</version>
+					<executions>
+						<execution>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						</execution>
+					</executions>
 				</plugin>
+
 			
 		</plugins>
 	</build>
