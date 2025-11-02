@@ -48,21 +48,25 @@ pipeline {
         }
 
 
-        // stage('Vulnerability Scan - Docker') {
-        //     steps {
-        //         parallel {
-        //             'Dependency Scan': { sh 'mvn dependency-check:check' },
-        //             'Trivy Scan':        { sh 'bash trivy-docker-image-scan.sh' },
-        //             'OPA Conftest': {
-        //                 sh """
-        //                 docker run --rm -v \$(pwd):/project \
-        //                     openpolicyagent/conftest test \
-        //                     --policy opa-docker-security.rego Dockerfile
-        //                 """
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Vulnerability Scan - Docker') {
+            steps {
+                parallel {
+                    'Dependency Scan': { 
+                        sh 'mvn dependency-check:check' 
+                    },
+                    'Trivy Scan': { 
+                        sh 'bash trivy-docker-image-scan.sh' 
+                    }
+                    // 'OPA Conftest': {
+                    //     sh """
+                    //     docker run --rm -v \$(pwd):/project \
+                    //         openpolicyagent/conftest test \
+                    //         --policy opa-docker-security.rego Dockerfile
+                    //     """
+                    // }
+                }
+            }
+        }
 
         stage('Docker Build and Push') {
             steps {
@@ -81,13 +85,13 @@ pipeline {
                 }
             }
     }
-        // post {
-        //     always {
-        //         junit 'target/surefire-reports/*.xml'
-        //         jacoco execPattern: 'target/jacoco.exec'
-        //         pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
-        //         dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
-        //     }
-        // }
+        post {
+            always {
+                junit 'target/surefire-reports/*.xml'
+                jacoco execPattern: 'target/jacoco.exec'
+                pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+                dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+            }
+        }
     }
 }
