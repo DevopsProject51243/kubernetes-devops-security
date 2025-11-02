@@ -13,25 +13,46 @@ pipeline {
             steps {
                 sh 'mvn test'
             }
-            post {
-                always {
-                    // Publish JUnit results
-                    junit 'target/surefire-reports/*.xml'
-                    // Publish JaCoCo coverage
-                    jacoco execPattern: 'target/jacoco.exec'
-                }
-            }
         }
         stage('Mutation Tests - PIT') {
             steps {
                 sh 'mvn org.pitest:pitest-maven:mutationCoverage'
             }
-            post {
-                always {
-                pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+            }
+
+        stage('SonarQube - SAST') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh 'mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=numeric \
+                        -Dsonar.projectName='numeric' \
+                        -Dsonar.host.url=http://3.108.62.198:9000 \
+                        -Dsonar.token=sqp_3b13814baebf663af533b923f1795a4a08c2ab3c'
+                }
+                timeout(time: 2, unit: 'MINUTES') {
+                    script {
+                        waitForQualityGate abortPipeline: true
+                    }
                 }
             }
+        }
+
+        stage('Vulnerability Scan - Docker') {
+            steps {
+                parallel {
+                    'Dependency Scan': { sh 'mvn dependency-check:check' },
+                    'Trivy Scan':        { sh 'bash trivy-docker-image-scan.sh' },
+                    'OPA Conftest': {
+                        sh """
+                        docker run --rm -v \$(pwd):/project \
+                            openpolicyagent/conftest test \
+                            --policy opa-docker-security.rego Dockerfile
+                        """
+                    }
+                }
             }
+        }
+
         stage('Docker Build and Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub', url: '') {
@@ -48,6 +69,14 @@ pipeline {
                 sh 'kubectl apply -f k8s_deployment_service.yaml'
                 }
             }
+    }
+    post {
+        always {
+            junit 'target/surefire-reports/*.xml'
+            jacoco execPattern: 'target/jacoco.exec'
+            pitmutation mutationStatsFile: '**/target/pit-reports/**/mutations.xml'
+            dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
+        }
     }
     }
 }
