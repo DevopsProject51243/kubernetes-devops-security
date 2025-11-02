@@ -23,15 +23,15 @@ pipeline {
 
          stage('SonarQube - SAST') {
             steps {
-                sh 'mvn clean package -DskipTests=true'
+                echo "Starting SonarQube Static Analysis..."
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                sh """ mvn clean verify sonar:sonar \
-                        -Dsonar.projectKey=numeric \
-                        -Dsonar.projectName='numeric' \
-                        -Dsonar.host.url=http://43.205.233.114:9000 \
-                        -Dsonar.token=sqp_7332b561f5b77c52398229eaadee969ca1ae48d9"""
+                
+                withSonarQubeEnv('SonarQube') {  // 'SonarQube' must match Jenkins global server config name
+                    sh """ mvn clean verify sonar:sonar \ -Dsonar.projectKey=numeric \ -Dsonar.projectName='numeric' \ -Dsonar.host.url=http://43.205.233.114:9000 \ -Dsonar.token=sqp_7332b561f5b77c52398229eaadee969ca1ae48d9"""
+                }
             }
             }
+
 
 
         // stage('SonarQube - SAST') {
