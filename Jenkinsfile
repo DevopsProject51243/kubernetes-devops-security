@@ -25,11 +25,11 @@ pipeline {
             steps {
                 sh 'mvn clean package -DskipTests=true'
                 archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                sh 'mvn clean verify sonar:sonar \
+                sh """ mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=numeric \
                         -Dsonar.projectName='numeric' \
                         -Dsonar.host.url=http://3.108.62.198:9000 \
-                        -Dsonar.token=sqp_3b13814baebf663af533b923f1795a4a08c2ab3c'
+                        -Dsonar.token=sqp_3b13814baebf663af533b923f1795a4a08c2ab3c"""
             }
             }
 
