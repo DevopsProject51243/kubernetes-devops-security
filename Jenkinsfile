@@ -21,31 +21,22 @@ pipeline {
             }
 
 
-         stage('SonarQube - SAST') {
+        stage('SonarQube - SAST') {
             steps {
-                echo "Starting SonarQube Static Analysis..."
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-                
-                withSonarQubeEnv('SonarQube') {  // 'SonarQube' must match Jenkins global server config name
-                    sh """ mvn clean verify sonar:sonar \ -Dsonar.projectKey=numeric \ -Dsonar.projectName='numeric' \ -Dsonar.host.url=http://43.205.233.114:9000 \ -Dsonar.token=sqp_7332b561f5b77c52398229eaadee969ca1ae48d9"""
+                withSonarQubeEnv('SonarQube') {
+                sh "mvn sonar:sonar \
+                    -Dsonar.projectKey=numeric-application \
+                    -Dsonar.host.url=http://43.205.233.114:9000"
+                }
+                timeout(time: 2, unit: 'MINUTES') {
+                script {
+                    waitForQualityGate abortPipeline: true
+                }
                 }
             }
             }
 
 
-
-        // stage('SonarQube - SAST') {
-        //     steps {
-        //         withSonarQubeEnv('SonarQube') {
-                    
-        //         }
-        //         timeout(time: 2, unit: 'MINUTES') {
-        //             script {
-        //                 waitForQualityGate abortPipeline: true
-        //             }
-        //         }
-        //     }
-        // }
 
         // stage('Vulnerability Scan - Docker') {
         //     steps {
