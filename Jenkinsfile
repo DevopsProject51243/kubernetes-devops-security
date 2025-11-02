@@ -25,7 +25,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                 sh "mvn sonar:sonar \
-                    -Dsonar.projectKey=numeric-application \
+                    -Dsonar.projectKey=numeric \
                     -Dsonar.host.url=http://43.205.233.114:9000"
                 }
                 timeout(time: 2, unit: 'MINUTES') {
