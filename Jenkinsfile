@@ -79,15 +79,16 @@ pipeline {
                 }
             }
         }
-         stage('Kubernetes Deployment - DEV') {
+        stage('Kubernetes Deployment - DEV') {
             steps {
                 withKubeConfig([credentialsId: 'kubeconfig']) {
                 sh 'sed -i "s#replace#ganesh5124/helm-counter:${GIT_COMMIT}#g"k8s_deployment_service.yaml'
                 sh 'kubectl apply -f k8s_deployment_service.yaml'
                 }
-            }
+                }
+        }
     }
-        post {
+    post {
             always {
                 junit 'target/surefire-reports/*.xml'
                 jacoco execPattern: 'target/jacoco.exec'
@@ -95,5 +96,4 @@ pipeline {
                 dependencyCheckPublisher pattern: 'target/dependency-check-report.xml'
             }
         }
-    }
 }
