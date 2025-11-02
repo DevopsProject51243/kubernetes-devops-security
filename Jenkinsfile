@@ -38,7 +38,7 @@ pipeline {
 
         stage('Vulnerability Scan') {
             steps {
-                sh 'mvn dependency-check:check'
+                sh 'mvn org.owasp:dependency-check-maven:check -Dnvd.api.key=$NVD_API_KEY'
             }
             post {
                 always {
