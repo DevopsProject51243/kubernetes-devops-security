@@ -28,11 +28,11 @@ pipeline {
                 sh """ mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=numeric \
                         -Dsonar.projectName='numeric' \
-                        -Dsonar.host.url=http://3.108.62.198:9000 \
-                        -Dsonar.token=sqp_3b13814baebf663af533b923f1795a4a08c2ab3c"""
+                        -Dsonar.host.url=http://43.205.233.114:9000 \
+                        -Dsonar.token=sqp_7332b561f5b77c52398229eaadee969ca1ae48d9"""
             }
             }
-            
+
 
         // stage('SonarQube - SAST') {
         //     steps {
