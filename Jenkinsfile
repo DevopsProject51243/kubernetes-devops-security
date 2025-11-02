@@ -29,16 +29,16 @@ pipeline {
                     -Dsonar.host.url=http://43.205.233.114:9000"
                 }
                 timeout(time: 2, unit: 'MINUTES') {
-                script {
-                    waitForQualityGate abortPipeline: true
-                }
+                    script {
+                        waitForQualityGate abortPipeline: true
+                    }
                 }
             }
             }
 
         stage('Vulnerability Scan') {
             steps {
-                sh 'mvn org.owasp:dependency-check-maven:check -Dnvd.api.key=$NVD_API_KEY'
+                sh 'mvn org.owasp:dependency-check-maven:check'
             }
             post {
                 always {
