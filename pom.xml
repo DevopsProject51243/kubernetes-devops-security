@@ -91,10 +91,7 @@
                    <artifactId>dependency-check-maven</artifactId>
                    <version>12.1.0</version>
                    <configuration>
-						<updateOnly>false</updateOnly>
-						<cveValidForHours>24</cveValidForHours>
-						<dataDirectory>${project.build.directory}/dependency-check-data</dataDirectory>
-						<scanSetSkip>false</scanSetSkip>
+						<ossIndexServerId>ossindex</ossIndexServerId>
 					</configuration>
 
                 </plugin>
