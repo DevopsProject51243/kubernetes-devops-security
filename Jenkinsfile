@@ -72,6 +72,18 @@ pipeline {
                 }
         }
 
+        stage('Vulnerability Scan - Kubernetes') {
+            steps {
+                sh '''\
+                docker run --rm \
+                    -v $(pwd):/project \
+                    openpolicyagent/conftest test \
+                    --policy policies/run_as_non_root.rego \
+                    k8s_deployment_service.yaml
+                '''
+            }
+        }
+
         stage('Docker Build and Push') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub', url: '') {
