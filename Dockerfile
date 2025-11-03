@@ -10,7 +10,7 @@ RUN addgroup -S k8s-pipeline \
 
 # Copy artifact & switch user
 COPY ${JAR_FILE} /home/k8s-pipeline/app.jar
-USER k8s-pipeline
+USER 1000
 
 
 ENTRYPOINT ["java","-jar","/home/k8s-pipeline/app.jar"]

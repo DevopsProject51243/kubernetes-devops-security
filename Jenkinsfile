@@ -3,7 +3,7 @@ pipeline {
 
 
     environment {
-        serviceName    = "devsecops-svc"
+        serviceName = "devsecops-svc"
     }
 
 
