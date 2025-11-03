@@ -1,14 +1,19 @@
-package docker.security
+package commands
+import rego.v1
 
-############################
-# 1. Do not run as root
-############################
-deny[msg] {
-    not any_user
-    msg := "Use USER to switch from root"
-}
+denylist := [
+	"apk",
+	"apt",
+	"pip",
+	"curl",
+	"wget",
+]
 
-any_user {
-    some i
-    input[i].Cmd == "user"
+deny contains msg if {
+	some i
+	input[i].Cmd == "run"
+	val := input[i].Value
+	contains(val[_], denylist[_])
+
+	msg := sprintf("unallowed commands found %s", [val])
 }
