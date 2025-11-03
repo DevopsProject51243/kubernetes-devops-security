@@ -16,10 +16,15 @@ spec:
         app: devsecops
     spec:
       securityContext:
-        runAsNonRoot: false
+        runAsNonRoot: true
       containers:
       - image: replace
         name: devsecops-container
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop: ["ALL"]
 ---
 apiVersion: v1
 kind: Service
