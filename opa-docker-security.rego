@@ -21,9 +21,8 @@ deny[msg] {
 deny[msg] {
     some i
     input[i].Cmd == "from"
-    if count(split(input[i].Value[0], "/")) > 1 {
-        msg := sprintf("Line %d: Use a trusted base image", [i])
-    }
+    count(split(input[i].Value[0], "/")) > 1
+    msg := sprintf("Line %d: Use a trusted base image", [i])
 }
 
 ############################
@@ -33,11 +32,9 @@ deny[msg] {
     some i
     input[i].Cmd == "from"
     parts := split(input[i].Value[0], ":")
-    if count(parts) > 1 {
-        if contains(lower(parts[1]), "latest") {
-            msg := sprintf("Line %d: Do not use 'latest' tag for base images", [i])
-        }
-    }
+    count(parts) > 1
+    contains(lower(parts[1]), "latest")
+    msg := sprintf("Line %d: Do not use 'latest' tag for base images", [i])
 }
 
 ############################
@@ -48,9 +45,8 @@ deny[msg] {
     input[i].Cmd == "run"
     val := lower(concat(" ", input[i].Value))
     matches := regex.find_all("(curl|wget)[^ ]*", val, -1)
-    if count(matches) > 0 {
-        msg := sprintf("Line %d: Avoid curl/wget in RUN", [i])
-    }
+    count(matches) > 0
+    msg := sprintf("Line %d: Avoid curl/wget in RUN", [i])
 }
 
 ############################
@@ -64,9 +60,8 @@ deny[msg] {
     val := lower(concat(" ", input[i].Value))
     some cmd
     cmd := upgrade_cmds[_]
-    if contains(val, cmd) {
-        msg := sprintf("Line %d: Do not upgrade system packages in Dockerfile", [i])
-    }
+    contains(val, cmd)
+    msg := sprintf("Line %d: Do not upgrade system packages in Dockerfile", [i])
 }
 
 ############################
