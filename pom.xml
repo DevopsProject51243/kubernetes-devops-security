@@ -91,9 +91,12 @@
                    <artifactId>dependency-check-maven</artifactId>
                    <version>12.1.0</version>
                    <configuration>
-                      <format>ALL</format>
-                      <failBuildOnCVSS>12</failBuildOnCVSS>
-                   </configuration>
+						<updateOnly>false</updateOnly>
+						<cveValidForHours>24</cveValidForHours>
+						<dataDirectory>${project.build.directory}/dependency-check-data</dataDirectory>
+						<scanSetSkip>false</scanSetSkip>
+					</configuration>
+
                 </plugin>
 		</plugins>
 	</build>
