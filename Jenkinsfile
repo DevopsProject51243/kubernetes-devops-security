@@ -73,15 +73,25 @@ pipeline {
         }
 
         stage('Vulnerability Scan - Kubernetes') {
-            steps {
-                sh '''\
-                docker run --rm \
-                    -v $(pwd):/project \
-                    openpolicyagent/conftest test \
-                    --policy policies/run_as_non_root.rego \
-                    k8s_deployment_service.yaml
-                '''
+            parallel {
+                stage('OPA conftest - Kubernetes'){
+                    steps {
+                        sh '''\
+                        docker run --rm \
+                            -v $(pwd):/project \
+                            openpolicyagent/conftest test \
+                            --policy policies/run_as_non_root.rego \
+                            k8s_deployment_service.yaml
+                        '''
+                    }
+                }
+                stage('Kubesec Scan'){
+                    steps {
+                        sh 'bash kubesec-scan.sh'
+                    }
+                }
             }
+            
         }
 
         stage('Docker Build and Push') {
