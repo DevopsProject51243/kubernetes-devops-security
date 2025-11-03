@@ -2,6 +2,11 @@ pipeline {
     agent any
 
 
+    environment {
+        serviceName    = "devsecops-svc"
+    }
+
+
     stages {
         stage('Build - Maven') {
             steps {
@@ -111,6 +116,23 @@ pipeline {
                             sh 'sed -i "s#replace#ganesh5124/helm-counter:${GIT_COMMIT}#g" k8s_deployment_service.yaml'
                             sh 'kubectl apply -f k8s_deployment_service.yaml'
                         }
+                    }
+                }
+            }
+        }
+
+        stage('Integration Test - DEV') {
+            steps {
+                script {
+                    try {
+                        withKubeConfig([credentialsId: 'kubeconfig']) {
+                            sh "bash integration-test.sh"
+                        }
+                    } catch (e) {
+                        withKubeConfig([credentialsId: 'kubeconfig']) {
+                            sh "kubectl -n default rollout undo deploy ${serviceName}"
+                        }
+                        error("Integration tests failed, rolled back deployment.")
                     }
                 }
             }
