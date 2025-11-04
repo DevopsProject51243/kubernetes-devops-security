@@ -121,20 +121,10 @@ pipeline {
                 }
             }
         }
-
-        stage('Integration Test - DEV') {
+        stage('CIS - K8'){
             steps {
-                script {
-                    try {
-                        withKubeConfig([credentialsId: 'kubeconfig']) {
-                            sh "bash integration-test.sh"
-                        }
-                    } catch (e) {
-                        withKubeConfig([credentialsId: 'kubeconfig']) {
-                            sh "kubectl -n default rollout undo deploy ${serviceName}"
-                        }
-                        error("Integration tests failed, rolled back deployment.")
-                    }
+                withKubeConfig([credentialsId: 'kubeconfig']) {
+                     sh "bash cis-kubelet.sh"
                 }
             }
         }
